@@ -2,18 +2,24 @@ use core::starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait INameRegistry<TContractState> {
-    fn store_name(ref self: TContractState, name: felt252, registrationType: NameRegistry::RegistrationType);
+    fn store_name(
+        ref self: TContractState, name: felt252, registration_type: NameRegistry::RegistrationType
+    );
     fn get_name(self: @TContractState, address: ContractAddress) -> felt252;
     fn get_owner(self: @TContractState) -> NameRegistry::Person;
     fn get_owner_name(self: @TContractState) -> felt252;
-    fn get_registration_info(self: @TContractState, address: ContractAddress) -> NameRegistry::RegistrationInfo;
+    fn get_registration_info(
+        self: @TContractState, address: ContractAddress
+    ) -> NameRegistry::RegistrationInfo;
 }
 
 #[starknet::contract]
 mod NameRegistry {
     use starknet::event::EventEmitter;
     use core::starknet::{ContractAddress, get_caller_address};
-    use core::starknet::storage::{Map, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess};
+    use core::starknet::storage::{
+        Map, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess
+    };
 
     #[storage]
     struct Storage {
@@ -30,7 +36,7 @@ mod NameRegistry {
     }
 
     #[derive(Drop, starknet::Event)]
-    struct StoredName { 
+    struct StoredName {
         #[key]
         user: ContractAddress,
         name: felt252,
@@ -44,12 +50,11 @@ mod NameRegistry {
 
     #[derive(Copy, Drop, Serde, starknet::Store)]
     pub enum RegistrationType {
-        Finite: u64,
-        #[default]
-        Infinite
+        finite: u64,
+        inifite,
     }
 
-    #[starknet::storage_node] 
+    #[starknet::storage_node]
     struct RegistrationNode {
         count: u64,
         info: RegistrationInfo,
@@ -67,7 +72,7 @@ mod NameRegistry {
     fn constructor(ref self: ContractState, owner: Person) {
         self.names.entry(owner.address).write(owner.name);
         self.total_names.write(1);
-        self.owner.write(owner);   
+        self.owner.write(owner);
     }
 
     // Public functions insode an impl block
@@ -79,23 +84,31 @@ mod NameRegistry {
         }
 
         fn get_name(self: @ContractState, address: ContractAddress) -> felt252 {
-            self.names.entry(address).read();
+            self.names.entry(address).read()
         }
 
         fn get_owner(self: @ContractState) -> Person {
-            self.owner.read();
-        }
-        
-        fn get_owner_name(self: @ContractState, address: ContractAddress) {
-            self.owner.name.read();
+            self.owner.read()
         }
 
-        fn get_registration_info(self: @ContractState, address: ContractAddress) -> RegistrationInfo {
-            self.registrations.entry(address).info.read();
+        fn get_owner_name(self: @ContractState) -> felt252 {
+            self.owner.name.read()
+        }
+
+        // fn get_registration_info(
+        //     self: @ContractState, address: ContractAddress
+        // ) -> RegistrationInfo {
+        //     self.registrations.entry(address).info.read();
+        //}
+
+        fn get_registration_info(
+            self: @ContractState, address: ContractAddress
+        ) -> RegistrationInfo {
+            self.registrations.entry(address).info.read()
         }
     }
 
-    // Standalone public function 
+    // Standalone public function
     #[external(v0)]
     fn get_contract_name(self: @ContractState) -> felt252 {
         'Name Registry'
@@ -104,14 +117,14 @@ mod NameRegistry {
     //Could be a group of functions about a same topic
     #[generate_trait]
     impl InternalFunctions of InternalFunctionsTrait {
-        fn store_name(
+        fn _store_name(
             ref self: ContractState,
-            user:ContractAddress,
+            user: ContractAddress,
             name: felt252,
             registration_type: RegistrationType
         ) {
             let total_names = self.total_names.read();
-            
+
             self.names.entry(user).write(name);
 
             let registration_info = RegistrationInfo {
