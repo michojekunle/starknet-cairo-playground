@@ -1,3 +1,5 @@
+pub mod reward_system;
+
 use core::starknet::ContractAddress;
 
 #[starknet::interface]
@@ -94,12 +96,6 @@ mod NameRegistry {
         fn get_owner_name(self: @ContractState) -> felt252 {
             self.owner.name.read()
         }
-
-        // fn get_registration_info(
-        //     self: @ContractState, address: ContractAddress
-        // ) -> RegistrationInfo {
-        //     self.registrations.entry(address).info.read();
-        //}
 
         fn get_registration_info(
             self: @ContractState, address: ContractAddress
