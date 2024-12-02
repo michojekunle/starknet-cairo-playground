@@ -1,4 +1,5 @@
 pub mod reward_system;
+pub mod auction;
 
 use core::starknet::ContractAddress;
 
