@@ -13,31 +13,30 @@ use core::starknet::ContractAddress;
 
 #[starknet::interface]
 pub trait IAuction<TContractState> {
-    fn create_auction(ref self: TContractState, user: ContractAddress, point: u128);
-    fn end_auction(ref self: TContractState, point: u128);
-    fn place_bid(self: @TContractState) -> u128;
+    fn create_auction(ref self: TContractState, name: felt252, nft_id: u128, duration: u128);
+    fn end_auction(ref self: TContractState, auction_id: u128);
+    fn place_bid(self: @TContractState, auction_id: u128);
+    fn get_auction(self: @TContractState) -> Auction;
 }
 
 #[starknet::contract]
-mod Auction {
+mod AuctionContract {
     use starknet::event::EventEmitter;
     use core::starknet::{ContractAddress, get_caller_address};
     use core::starknet::storage::{Map, StoragePathEntry, StoragePointerWriteAccess, StoragePointerReadAccess};
 
-    #[derive(Drop, Serde, Copy, starknet::Store)]
-    struct Auction {
-        name: felt252,
-        nft_id: u128,
-        duration: u128,
-        highest_bidder: ContractAddress,
-        highest_bid: u128,
-        bids: Map<ContractAddress, u128>[],
-    }
-
     #[storage]
     struct Storage {
-        auctions: Map::<ContractAddress, Auction>,
+        auctions: Map::<u128, Auction>,
         no_of_auctions: u128,
+    }
+
+    #[event]
+    #[derive(Drop)]
+    enum Event {
+        AuctionCreated: AuctionCreated,
+        AuctionEnded: AuctionEnded,
+        BidPlaced: BidPlaced
     }
 
     #[derive(Copy, Drop, starknet::Event)]
@@ -58,46 +57,29 @@ mod Auction {
     struct BidPlaced {
         #[key]
         auction_id: u128,
-        bid: u128,
+        bidder: ContractAddress,
+        bid: u128
     }
 
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        AuctionCreated: AuctionCreated,
-        AuctionEnded: AuctionEnded,
-        BidPlaced: BidPlaced
+    #[derive(Drop, starknet::Store)]
+    pub struct Auction {
+        name: felt252,
+        seller: ContractAddress,
+        nft_id: u128,
+        duration: u128,
+        highest_bidder: ContractAddress,
+        highest_bid: u128,
+        bids: Map<ContractAddress, u128>
     }
 
 
     #[abi(embed_v0)]
     impl Auction of super::IAuction<ContractState> {
-        fn add_points(ref self: ContractState, user: ContractAddress, point: u128) {
-            self.balances.entry(user).write(point);
-            self.emit(PointsAdded { user: user, point: point });
-        }
-
-        fn redeem_points(ref self: ContractState, point: u128) {
-            let caller = get_caller_address();
-            let user_point_balance = self.balances.entry(caller).read();
-
-            assert!(user_point_balance >= point);
-            let new_user_point_balance = user_point_balance - point;
-
-            assert!(new_user_point_balance >= 0);
-            self.balances.entry(caller).write(new_user_point_balance);
-
-            self.emit(AuctionEnded {user: caller, point: point});
-        }
-
-        fn get_balance(self: @ContractState) -> u128 {
-            let caller = get_caller_address();
-            self.balances.entry(caller).read()
-        }
+        fn create_auction()
     }
 
     #[external(v0)]
     pub fn get_contract_name(self: @ContractState) -> felt252 {
-        'Point Reward System'
+        'Auction Contract'
     }
 }
