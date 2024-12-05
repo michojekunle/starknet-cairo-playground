@@ -2,10 +2,10 @@ use starknet::ContractAddress;
 
 use snforge_std::{declare, ContractClassTrait, DeclareResultTrait};
 
-use auction::IHelloStarknetSafeDispatcher;
-use auction::IHelloStarknetSafeDispatcherTrait;
-use auction::IHelloStarknetDispatcher;
-use auction::IHelloStarknetDispatcherTrait;
+use auction::IAuctionSafeDispatcher;
+use auction::IAuctionSafeDispatcherTrait;
+use auction::IAuctionDispatcher;
+use auction::IAuctionDispatcherTrait;
 
 fn deploy_contract(name: ByteArray) -> ContractAddress {
     let contract = declare(name).unwrap().contract_class();
@@ -14,10 +14,10 @@ fn deploy_contract(name: ByteArray) -> ContractAddress {
 }
 
 #[test]
-fn test_increase_balance() {
-    let contract_address = deploy_contract("HelloStarknet");
+fn test_constructor() {
+    let contract_address = deploy_contract("Auction");
 
-    let dispatcher = IHelloStarknetDispatcher { contract_address };
+    let dispatcher = IAuctionDispatcher { contract_address };
 
     let balance_before = dispatcher.get_balance();
     assert(balance_before == 0, 'Invalid balance');
@@ -31,9 +31,9 @@ fn test_increase_balance() {
 #[test]
 #[feature("safe_dispatcher")]
 fn test_cannot_increase_balance_with_zero_value() {
-    let contract_address = deploy_contract("HelloStarknet");
+    let contract_address = deploy_contract("Auction");
 
-    let safe_dispatcher = IHelloStarknetSafeDispatcher { contract_address };
+    let safe_dispatcher = IAuctionSafeDispatcher { contract_address };
 
     let balance_before = safe_dispatcher.get_balance().unwrap();
     assert(balance_before == 0, 'Invalid balance');
