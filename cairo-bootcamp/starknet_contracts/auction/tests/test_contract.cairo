@@ -119,8 +119,6 @@ fn test_constructor_initialization() {
             mock_erc721_contract_address,
             auction_contract_address 
         ) = test_setup();
-
-    auction_contract.
 }
 
 #[test]
