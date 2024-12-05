@@ -106,15 +106,25 @@ fn test_setup() -> (
 
 // Constructor Initialization Tests
 #[test]
-fn test_constructor_initialization() { // Pseudo code:
-// 1. Verify contract deployed with correct parameters
-// 2. Check initial state variables
-// 3. Validate default values are set correctly
-// 4. Ensure no unexpected side effects during initialization
+fn test_constructor_initialization() { 
+    let ( 
+            auction_contract,
+            mock_erc721_contract,
+            mock_erc20_contract,
+            user1,
+            user2,
+            creator,
+            nft_id,
+            mock_erc20_contract_address,
+            mock_erc721_contract_address,
+            auction_contract_address 
+        ) = test_setup();
+
+    auction_contract.
 }
 
 #[test]
-fn test_start_auction_by_seller() { // Pseudo code:
+fn test_start_auction_by_seller() { 
 // 1. Attempt to start auction as seller
 // 2. Verify auction started flag is true
 // 3. Check end timestamp is set correctly
@@ -123,14 +133,14 @@ fn test_start_auction_by_seller() { // Pseudo code:
 }
 
 #[test]
-fn test_start_auction_by_non_seller() { // Pseudo code:
+fn test_start_auction_by_non_seller() { 
 // 1. Attempt to start auction by non-seller
 // 2. Verify transaction reverts
 // 3. Ensure no state changes occur
 }
 
 #[test]
-fn test_place_valid_bid() { // Pseudo code:
+fn test_place_valid_bid() { 
 // 1. Start auction
 // 2. Place bid above starting price
 // 3. Verify highest bidder updated
@@ -140,7 +150,7 @@ fn test_place_valid_bid() { // Pseudo code:
 }
 
 #[test]
-fn test_place_invalid_bid() { // Pseudo code:
+fn test_place_invalid_bid() { 
 // 1. Start auction
 // 2. Attempt to place bid below current highest bid
 // 3. Verify transaction reverts
@@ -148,7 +158,7 @@ fn test_place_invalid_bid() { // Pseudo code:
 }
 
 #[test]
-fn test_withdraw_bid_by_non_highest_bidder() { // Pseudo code:
+fn test_withdraw_bid_by_non_highest_bidder() { 
 // 1. Start auction
 // 2. Place multiple bids
 // 3. Attempt withdrawal by non-highest bidder
@@ -157,7 +167,7 @@ fn test_withdraw_bid_by_non_highest_bidder() { // Pseudo code:
 }
 
 #[test]
-fn test_withdraw_bid_by_highest_bidder() { // Pseudo code:
+fn test_withdraw_bid_by_highest_bidder() { 
 // 1. Start auction
 // 2. Place bid
 // 3. Attempt withdrawal by highest bidder
@@ -165,7 +175,7 @@ fn test_withdraw_bid_by_highest_bidder() { // Pseudo code:
 }
 
 #[test]
-fn test_end_auction_with_winner() { // Pseudo code:
+fn test_end_auction_with_winner() { 
 // 1. Start auction
 // 2. Place bids
 // 3. Advance time to auction end
@@ -176,7 +186,7 @@ fn test_end_auction_with_winner() { // Pseudo code:
 }
 
 #[test]
-fn test_end_auction_without_bids() { // Pseudo code:
+fn test_end_auction_without_bids() { 
 // 1. Start auction
 // 2. Advance time to auction end
 // 3. End auction
@@ -185,7 +195,7 @@ fn test_end_auction_without_bids() { // Pseudo code:
 }
 
 #[test]
-fn test_full_auction_lifecycle() { // Pseudo code:
+fn test_full_auction_lifecycle() { 
 // 1. Deploy auction contract
 // 2. Start auction
 // 3. Place multiple bids from different addresses
@@ -197,7 +207,7 @@ fn test_full_auction_lifecycle() { // Pseudo code:
 }
 
 #[test]
-fn test_auction_edge_cases() { // Pseudo code:
+fn test_auction_edge_cases() { 
 // 1. Test various invalid scenarios:
 //    - Starting auction by non-seller
 //    - Ending auction before start
