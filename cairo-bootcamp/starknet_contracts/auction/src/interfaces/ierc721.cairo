@@ -18,4 +18,5 @@ pub trait IERC721<TContractState> {
     fn is_approved_for_all(
         self: @TContractState, owner: ContractAddress, operator: ContractAddress
     ) -> bool;
+    fn mint(ref self: TContractState, recipient: ContractAddress, token_id: u256);
 }
